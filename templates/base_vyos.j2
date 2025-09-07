@@ -1,0 +1,13 @@
+# Base config applied to every device
+set system host-name {{ inventory_hostname }}
+
+{% if loopback %}
+set interfaces loopback lo address {{ loopback }}
+{% endif %}
+
+{% for iface in interfaces %}
+set interfaces ethernet {{ iface.name }} description "{{ iface.desc }}"
+set interfaces ethernet {{ iface.name }} address {{ iface.ip }}
+{% endfor %}
+
+set service ssh port 22
