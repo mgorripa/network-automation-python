@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Lint (flake8)
+        run: |
+          source .venv/bin/activate
+          flake8 scripts tests
+
+      - name: Render configs (dry-run; no device access)
+        run: |
+          source .venv/bin/activate
+          python scripts/deploy_async.py --generate-only
+          test -s configs_generated || (echo "No configs generated" && exit 1)
+          ls -la configs_generated || true
+
+      - name: Unit tests
+        run: |
+          source .venv/bin/activate
+          pytest -q
+
+      - name: Upload rendered configs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: configs_generated
+          path: configs_generated/
+          if-no-files-found: warn
