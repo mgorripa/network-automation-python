@@ -1,0 +1,24 @@
+# Base
+set system host-name R1
+set interfaces loopback lo address 1.1.1.1/32
+set interfaces ethernet eth0 description "to R2"
+set interfaces ethernet eth0 address 192.0.2.1/30
+set interfaces ethernet eth2 description "LAN-A"
+set interfaces ethernet eth2 address 10.10.10.1/24
+set interfaces ethernet eth3 description "to ISP-A"
+set interfaces ethernet eth3 address 203.0.113.1/30
+set service ssh port 22
+
+# OSPF
+set protocols ospf parameters router-id 1.1.1.1
+set protocols ospf area 0 network 192.0.2.0/30
+set protocols ospf area 0 network 10.10.10.0/24
+
+# BGP
+set protocols bgp 65000 parameters router-id 1.1.1.1
+set protocols bgp 65000 network 10.10.10.0/24
+set protocols bgp 65000 neighbor 203.0.113.2 remote-as 65100
+
+# Default route + redistribute to OSPF
+set protocols static route 0.0.0.0/0 next-hop 203.0.113.2
+set protocols ospf redistribute static
