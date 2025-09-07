@@ -1,0 +1,10 @@
+# Base
+set system host-name R5
+set interfaces loopback lo address 5.5.5.5/32
+set interfaces ethernet eth0 description "to R1"
+set interfaces ethernet eth0 address 203.0.113.2/30
+set service ssh port 22
+
+# BGP
+set protocols bgp 65100 parameters router-id 5.5.5.5
+set protocols bgp 65100 neighbor 203.0.113.1 remote-as 65000
