@@ -30,6 +30,7 @@ The goal was to move away from manual CLI work and adopt modern infrastructure-a
 ---
 
 ## Repository Structure
+```bash
 network-automation-python/
 ├── README.md # Project documentation (this file)
 ├── .env.example # Example environment variables (copy to .env)
@@ -52,7 +53,7 @@ network-automation-python/
 │ ├── cleanup.py
 │ └── logging_config.py
 └── .github/workflows/ci.yml # CI/CD pipeline (lint + config build)
-
+```
 
 ---
 
