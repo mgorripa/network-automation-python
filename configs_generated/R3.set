@@ -1,0 +1,13 @@
+# Base
+set system host-name R3
+set interfaces loopback lo address 3.3.3.3/32
+set interfaces ethernet eth0 description "to R2"
+set interfaces ethernet eth0 address 192.0.2.6/30
+set interfaces ethernet eth1 description "to R4"
+set interfaces ethernet eth1 address 192.0.2.9/30
+set service ssh port 22
+
+# OSPF
+set protocols ospf parameters router-id 3.3.3.3
+set protocols ospf area 0 network 192.0.2.4/30
+set protocols ospf area 0 network 192.0.2.8/30
