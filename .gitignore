@@ -1,0 +1,17 @@
+# venv / editor / OS
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# secrets
+.env
+
+# generated outputs
+logs/
+backups/
+configs_generated/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
