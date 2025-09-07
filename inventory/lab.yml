@@ -1,0 +1,95 @@
+# Lab inventory for my OSPF + BGP automation project
+# Update "host" IPs to whatever addresses you use to reach VyOS in GNS3.
+
+devices:
+  R1:
+    host: 192.168.56.101
+    asn: 65000
+    role: edge
+    loopback: 1.1.1.1/32
+    interfaces:
+      - { name: eth0, ip: 192.0.2.1/30, desc: "to R2" }
+      - { name: eth2, ip: 10.10.10.1/24, desc: "LAN-A" }
+      - { name: eth3, ip: 203.0.113.1/30, desc: "to ISP-A" }
+    ospf:
+      area0:
+        - 192.0.2.0/30
+        - 10.10.10.0/24
+    bgp:
+      asn: 65000
+      advertise:
+        - 10.10.10.0/24
+      neighbors:
+        - { ip: 203.0.113.2, remote_as: 65100 }
+    defaults:
+      static_default: { next_hop: 203.0.113.2, redistribute_into_ospf: true }
+
+  R2:
+    host: 192.168.56.102
+    asn: 65000
+    role: core
+    loopback: 2.2.2.2/32
+    interfaces:
+      - { name: eth0, ip: 192.0.2.2/30, desc: "to R1" }
+      - { name: eth1, ip: 192.0.2.5/30, desc: "to R3" }
+    ospf:
+      area0:
+        - 192.0.2.0/30
+        - 192.0.2.4/30
+
+  R3:
+    host: 192.168.56.103
+    asn: 65000
+    role: core
+    loopback: 3.3.3.3/32
+    interfaces:
+      - { name: eth0, ip: 192.0.2.6/30, desc: "to R2" }
+      - { name: eth1, ip: 192.0.2.9/30, desc: "to R4" }
+    ospf:
+      area0:
+        - 192.0.2.4/30
+        - 192.0.2.8/30
+
+  R4:
+    host: 192.168.56.104
+    asn: 65000
+    role: edge
+    loopback: 4.4.4.4/32
+    interfaces:
+      - { name: eth0, ip: 192.0.2.10/30, desc: "to R3" }
+      - { name: eth2, ip: 10.20.20.1/24, desc: "LAN-B" }
+      - { name: eth3, ip: 203.0.113.5/30, desc: "to ISP-B" }
+    ospf:
+      area0:
+        - 192.0.2.8/30
+        - 10.20.20.0/24
+    bgp:
+      asn: 65000
+      advertise:
+        - 10.20.20.0/24
+      neighbors:
+        - { ip: 203.0.113.6, remote_as: 65200 }
+
+  R5:
+    host: 192.168.56.105
+    asn: 65100
+    role: isp
+    loopback: 5.5.5.5/32
+    interfaces:
+      - { name: eth0, ip: 203.0.113.2/30, desc: "to R1" }
+    bgp:
+      asn: 65100
+      neighbors:
+        - { ip: 203.0.113.1, remote_as: 65000 }
+
+  R6:
+    host: 192.168.56.106
+    asn: 65200
+    role: isp
+    loopback: 6.6.6.6/32
+    interfaces:
+      - { name: eth0, ip: 203.0.113.6/30, desc: "to R4" }
+    bgp:
+      asn: 65200
+      neighbors:
+        - { ip: 203.0.113.5, remote_as: 65000 }
