@@ -1,0 +1,7 @@
+# OSPF configuration
+{% if ospf %}
+set protocols ospf parameters router-id {{ loopback.split('/')[0] if loopback else '0.0.0.0' }}
+{% for net in ospf.area0 %}
+set protocols ospf area 0 network {{ net }}
+{% endfor %}
+{% endif %}
