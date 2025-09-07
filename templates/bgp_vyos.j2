@@ -1,0 +1,17 @@
+# BGP configuration
+{% if bgp %}
+set protocols bgp {{ bgp.asn }} parameters router-id {{ loopback.split('/')[0] if loopback else '0.0.0.0' }}
+{% for pfx in bgp.advertise | default([]) %}
+set protocols bgp {{ bgp.asn }} network {{ pfx }}
+{% endfor %}
+{% for n in bgp.neighbors | default([]) %}
+set protocols bgp {{ bgp.asn }} neighbor {{ n.ip }} remote-as {{ n.remote_as }}
+{% endfor %}
+{% endif %}
+
+{% if defaults and defaults.static_default %}
+set protocols static route 0.0.0.0/0 next-hop {{ defaults.static_default.next_hop }}
+{% if defaults.static_default.redistribute_into_ospf %}
+set protocols ospf redistribute static
+{% endif %}
+{% endif %}
