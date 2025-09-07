@@ -1,0 +1,10 @@
+# Base
+set system host-name R6
+set interfaces loopback lo address 6.6.6.6/32
+set interfaces ethernet eth0 description "to R4"
+set interfaces ethernet eth0 address 203.0.113.6/30
+set service ssh port 22
+
+# BGP
+set protocols bgp 65200 parameters router-id 6.6.6.6
+set protocols bgp 65200 neighbor 203.0.113.5 remote-as 65000
